@@ -1,5 +1,5 @@
 import SearchForm from "@/components/SearchForm";
-import StartupCard from "../components/StartupCard";
+import StartupCard, { StartupCardType } from "../components/StartupCard";
 import { client } from "@/sanity/lib/client";
 import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 
@@ -14,17 +14,6 @@ const Home = async ({
 
   console.log(JSON.stringify(posts, null, 2))
 
-  //const posts = [
-  //  {
-  //    _createdAd: new Date(),
-  //    views: 55,
-  //    author: {_id: 1, name: "ekin"},
-  //    description: "this is a description.",
-  //    image: "https://upload.wikimedia.org/wikipedia/en/4/4d/Shrek_%28character%29.png",
-  //    category: "Robots",
-  //    title: "We Robots",
-  //  }
-  //]
   return (
     <>
       <section className="pink_container">
