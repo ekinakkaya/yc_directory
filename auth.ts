@@ -14,12 +14,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const existingUser = await client
         .withConfig({ useCdn: false })
         .fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
-          id: id,
+          id,
         });
 
+
       if (!existingUser) {
+        console.log("creating new user.")
         await writeClient.withConfig({ useCdn: false }).create({
           _type: "author",
+          //_id: id,
           id: id,
           name: name,
           username: login,
