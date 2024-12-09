@@ -1,6 +1,9 @@
 import { formatDate } from "@/lib/utils";
 import { client } from "@/sanity/lib/client";
-import { STARTUP_BY_ID_QUERY } from "@/sanity/lib/queries";
+import {
+  PLAYLIST_BY_SLUG_QUERY,
+  STARTUP_BY_ID_QUERY,
+} from "@/sanity/lib/queries";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,6 +11,7 @@ import React, { Suspense } from "react";
 import markdownit from "markdown-it";
 import { Skeleton } from "@/components/ui/skeleton";
 import View from "@/components/View";
+import StartupCard, { StartupCardType } from "@/app/components/StartupCard";
 
 export const experimental_ppr = true;
 
@@ -17,9 +21,15 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
   const post = await client.fetch(STARTUP_BY_ID_QUERY, { id });
 
+  const playlistResult = await client.fetch(PLAYLIST_BY_SLUG_QUERY, {
+    slug: "editor-picks-0",
+  });
+
+  const editorPosts = playlistResult?.select || [];
+
   if (!post) return notFound();
 
-  const parsedContent = md.render(post?.pitch  || "");
+  const parsedContent = md.render(post?.pitch || "");
 
   return (
     <>
@@ -51,15 +61,20 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
               />
               <div>
                 <p className="text-20-medium">{post.author.name}</p>
-                <p className="text-16-medium !text-black-300">@{post.author.username}</p>
+                <p className="text-16-medium !text-black-300">
+                  @{post.author.username}
+                </p>
               </div>
             </Link>
             <p className="category-tag">{post.category}</p>
           </div>
 
           <h3 className="text-30-bold">Pitch Details</h3>
-          {parsedContent? (
-            <article className="prose max-w-4xl font-work-sans break-all" dangerouslySetInnerHTML={{__html: parsedContent}} />
+          {parsedContent ? (
+            <article
+              className="prose max-w-4xl font-work-sans break-all"
+              dangerouslySetInnerHTML={{ __html: parsedContent }}
+            />
           ) : (
             <p className="no-result">No details provided.</p>
           )}
@@ -67,13 +82,23 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
         <hr className="divider" />
 
-        { /* EDITOR SELECTED STARTUPS */ }
+        {editorPosts?.length > 0 && (
+          <div className="max-w-4xl mx-auto">
+            <p className="text-30-semibold">Editor Picks</p>
+
+            <ul className="mt-7 card_grid-sm">
+              {editorPosts &&
+                editorPosts.map((post: StartupCardType, i: number) => (
+                  <StartupCard key={i} post={post} />
+                ))}
+            </ul>
+          </div>
+        )}
 
         <Suspense fallback={<Skeleton className="view_skeleton" />}>
           <View id={id}></View>
         </Suspense>
       </section>
-      <h1 className="text-3xl">{post.title}</h1>
     </>
   );
 };
