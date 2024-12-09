@@ -4,10 +4,14 @@ A Next.js 15 platform where entrepreneurs can submit their startup ideas for vir
 
 # install & run
 
-after doing a normal ```npm install```, we need to do an additional ```npm install next@canary``` since we need the canary version to be able to use Partial Pre Rendering (PPR) at the moment. (9.12.2024)
 ```
+# clone the repo and install the dependencies
 git clone https://github.com/ekinakkaya/yc_directory.git
 cd yc_directory
 npm install
-npm install next@canary
+```
+
+```
+# to build & run the developer env
+npm run dev
 ```
